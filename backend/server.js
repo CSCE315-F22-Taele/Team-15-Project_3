@@ -45,3 +45,14 @@ app.get('/itemIngredients', (req, response) => {
         response.json({rows: res.rows})
     })
 })
+
+app.get('/invDelete', (req, response) => {
+    let input = req.query;
+    pool.query(`DELETE FROM INVENTORY WHERE INGREDIENT_ID=${input.id}`, (err, res) => {
+        if(err) {
+            response.json({err: err})
+            return
+        }
+        response.json({rows: res.rows})
+    })
+})

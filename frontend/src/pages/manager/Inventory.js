@@ -49,6 +49,14 @@ export default function Inventory() {
   const handleDelete = (dat) => {
     // FIXME: should delete "dat" from db
     // dat: int indgredient_id, string name, int quantity
+    const options = {
+      method: "GET",
+      url: `${url}/invDelete`,
+      params: {id:dat.ingredient_id}
+    };
+    axios.request(options).then((res) => {
+      
+    });
 
     setData(data.filter((d) => d.ingredient_id !== dat.ingredient_id));
   };
