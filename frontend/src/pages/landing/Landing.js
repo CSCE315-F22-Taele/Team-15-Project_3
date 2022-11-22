@@ -8,8 +8,27 @@ import { useEffect, useState } from "react";
 import { url } from '../../config/global'
 import axios from 'axios'
 
+let isSpanish = true;
+
+const origText = [
+  "Manager",
+  "Cashier",
+  "Driver",
+  "Customer",
+  "Translate to Spanish"
+]
+
+let pageText = [
+  "Manager",
+  "Cashier",
+  "Driver",
+  "Customer",
+  "Translate to Spanish"
+]
+
 export default function Landing() {
 
+  const [text, setText] = useState([...origText]);
   const [googleIdentityID, setGoogleIdentityID] = useState(null)
   // const [userInfo, setUserInfo] = useState({})
 
@@ -21,7 +40,66 @@ export default function Landing() {
     axios.request(options).then((res) => {
       setGoogleIdentityID(res.data.id)
     })
+
+    // let data = JSON.parse(window.localStorage.getItem("PAGE_TEXT"));
+    // if (data !== null) {
+    //   pageText = data;
+    // }
+
+    // data = window.localStorage.getItem("IS_SPANISH");
+    // if (data !== "true") {
+    //   isSpanish = false;
+    // }
   }, [])
+
+  async function translateText(textToTranslate) {
+
+    let options = {
+      method: 'GET',
+      url: `${url}/translate`,
+      params: {text: textToTranslate}
+    }
+  
+  
+    let val;
+    
+    await axios.request(options).then((res) => {
+        console.log(res.data);
+        val = res.data;
+    })
+
+    return val;
+
+  }
+
+  function translateWords(orig) {
+    let thing = [];
+
+    orig.forEach(async (element, index) => {
+      thing.push(await translateText(element));
+    });
+
+    return thing;
+  }
+
+  async function changeLanguage() {
+    isSpanish = !isSpanish;
+
+    await (() => {
+      if (isSpanish) {
+        pageText = translateWords(origText);
+      } else {
+        pageText.forEach((element, index) => {
+          pageText[index] = origText[index];
+        });
+      }
+    });
+  
+    console.log(pageText);
+  
+    window.localStorage.setItem("PAGE_TEXT", JSON.stringify(pageText));
+    window.localStorage.setItem("IS_SPANISH", JSON.stringify(isSpanish));
+  }
 
   return (
     <div>
@@ -46,18 +124,21 @@ export default function Landing() {
           aria-label="outlined primary button group"
         >
           <Link to="/manager">
-            <Button>Manager</Button>
+            <Button>{text[0]}</Button>
           </Link>
           <Link to="/cashier">
-            <Button>Cashier</Button>
+            <Button>{text[1]}</Button>
           </Link>
           <Link to="/driver">
-            <Button>Driver</Button>
+            <Button>{text[2]}</Button>
           </Link>
         </ButtonGroup>
         <div>
           <Link to="/customer">
-            <Button variant="contained">Customer</Button>
+            <Button variant="contained">{text[3]}</Button>
+          </Link>
+          <Link to="/">
+            <Button variant="contained" onClick={() => changeLanguage()}>{text[4]}</Button>
           </Link>
         </div>
       </div>

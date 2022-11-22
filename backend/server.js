@@ -2,7 +2,10 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const path = require("path");
-const { Pool } = require("pg");
+const { Pool, Query } = require("pg");
+const {Translate} = require("@google-cloud/translate").v2;
+const { response } = require("express");
+const googleTranslate = require("google-translate")(process.env.GOOGLE_TRANSLATE_KEY);
 
 dotenv.config({ path: "./.env" });
 const PORT = process.env.PORT || 1111; // this needs to match proxy in front-end package.json
@@ -10,6 +13,18 @@ const PORT = process.env.PORT || 1111; // this needs to match proxy in front-end
 const app = express();
 app.use(cors());
 app.use(express.static(path.join(__dirname + "/public")));
+
+//const projectId = "optimal-waters-369400";
+const CREDS = JSON.parse(process.env.GOOGLE_TRANSLATE_KEY);
+
+const TRANSLATE = new Translate({
+  projectId: CREDS.project_id,
+  credentials: CREDS
+});
+const SOURCE = ["en", "English"];
+const TARGET = ["es", "Spanish"];
+
+let parent = "projects/optimal-waters-369400/locations/global";
 
 // start database connection
 const connectionParams = {
@@ -20,6 +35,14 @@ const connectionParams = {
 };
 const pool = new Pool(connectionParams);
 pool.connect();
+
+app.get("/translate", async (req, res) => {
+  //let text = "Hello World";
+  let target = "es";
+  let [translations] = await TRANSLATE.translate(req.query.text, target);
+  res.send(translations);
+  console.log(`Translations: ${translations}`);
+})
 
 
 // start listening
