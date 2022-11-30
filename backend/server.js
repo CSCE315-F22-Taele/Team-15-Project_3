@@ -389,3 +389,13 @@ app.get("/items", (req, response) => {
     }
   );
 });
+
+app.get("/userPerm", (req, response) => {
+  pool.query('SELECT * FROM users', (err, res) => {
+    if (err) {
+      response.json({ err: err });
+      return;
+    }
+    response.json({ rows: res.rows });
+  });
+});
