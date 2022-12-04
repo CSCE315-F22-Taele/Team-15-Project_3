@@ -120,6 +120,20 @@ app.get("/getInvID", (req, response) => {
     })
 })
 
+app.get("/getMenuID", (req, response) => {
+  let name = req.query.name;
+  pool.query(`SELECT ITEM_ID FROM ITEMS WHERE NAME=$1`, [name], 
+    (err, res) => {
+      if (err) {
+        console.log(err);
+        response.json({ err: err });
+        return;
+      }
+      console.log(res);
+      response.json({ rows: res.rows });
+    })
+})
+
 app.get("/itemIngredients", (req, response) => {
   pool.query(
     `SELECT ITEM.NAME AS ITEM, ITEM.ID, ITEM.EXTRA_PRICE, ITEM.CATEGORY, INVENTORY.NAME AS INGREDIENT_NAME, INVENTORY.INGREDIENT_ID, ITEM_INGREDIENTS.AMOUNT FROM ITEM JOIN ITEM_INGREDIENTS ON ITEM.ID = ITEM_INGREDIENTS.ITEM_ID JOIN INVENTORY ON INVENTORY.INGREDIENT_ID = ITEM_INGREDIENTS.INVENTORY_ID`,
@@ -392,25 +406,33 @@ app.get("/items", (req, response) => {
 
 app.get("/addMenuItem", (req, response) => {
   let queryThing = `INSERT INTO ITEM(NAME, CATEGORY, EXTRA_PRICE) VALUES ('${req.query.name}', '${req.query.category}', ${req.query.price})`;
+  console.log(queryThing);
 
   pool.query(queryThing, (err, res) => {
     if (err) {
+      console.log(err);
       response.json({err: err});
       return;
     }
-    response.json({ res: res.rows });
+    //response.json({ res: res.rows });
 
-    let ingreds = res.query.ingredients;
+    let ingreds = req.query.ingredients;
+
+    console.log("Menu name: ", req.query.name);
+    console.log("Menu category: ", req.query.category);
+    console.log("Menu price: ", req.query.price);
+    console.log("Menu ingredients: ", req.query.ingredients);
 
     ingreds.forEach((ingredient) => {
-      let ingredientMapping = `INSERT INTO ITEM_INGREDIENTS(ITEM_ID, INVENTORY_ID, AMOUNT) VALUES ((SELECT ID FROM ITEM WHERE NAME = '${req.query.name}'), ${ingredient.id}, ${ingredient.quantity})`
+      let ingredientMapping = `INSERT INTO ITEM_INGREDIENTS(ITEM_ID, INVENTORY_ID, AMOUNT) VALUES ((SELECT ID FROM ITEM WHERE NAME = '${req.query.name}'), ${ingredient.ingredient_id}, ${ingredient.amount})`
 
       pool.query(ingredientMapping, (err2, res2) => {
-        if (err) {
+        if (err2) {
+          console.log(err2);
           response.json({err: err2});
           return;
         }
-        response.json({ res: res2.rows });
+        //response.json({ res: res2.rows });
       })
     });
   }

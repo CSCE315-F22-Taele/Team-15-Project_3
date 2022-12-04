@@ -52,31 +52,32 @@ export default function MyMenuDialog({ open, onClose, onAddMenuItem }) {
   const loading = openIngrList && ingredients.length === 0;
 
   useEffect(() => {
-    //let active = true;
+    let active = true;
 
     if (!loading) return undefined;
 
     (async () => {
       // await sleep(1e3); // should be replaced by actual async stuff
 
-      // if (active) {
+      if (active) {
       //   setIngredients([...dummyData]);
       // }
 
-      const options = {
-        method: "GET",
-        url: `${url}/inventory`,
-      };
-      axios.request(options).then((res) => {
-        console.log(res.data.rows);
-        let rows = res.data.rows;
-        setIngredients(rows);
-      });
+        const options = {
+          method: "GET",
+          url: `${url}/inventory`,
+        };
+        axios.request(options).then((res) => {
+          console.log(res.data.rows);
+          let rows = res.data.rows;
+          setIngredients(rows);
+        });
+      }
     })();
 
-    // return () => {
-    //   active = false;
-    // };
+    return () => {
+      active = false;
+    };
   }, [loading]);
 
   const handleNameChange = (e) => {
@@ -110,6 +111,18 @@ export default function MyMenuDialog({ open, onClose, onAddMenuItem }) {
 
   const handleErrorClose = () => setError(false);
 
+  function getIdForIngredient(ingredient_name) {
+    let options = {
+      method: "GET",
+      url: `${url}/getInvID`,
+      params: { name: ingredient_name }
+    };
+
+    return axios.request(options).then((res) => {
+      return res.data.rows;
+    })
+  }
+
   const handleAdd = () => {
     if (name === "" || selectedIngrs.length === 0) {
       setError(true);
@@ -119,8 +132,10 @@ export default function MyMenuDialog({ open, onClose, onAddMenuItem }) {
     let existingIngrs = [];
     let newIngrs = [];
 
+    console.log(selectedIngrs);
+
     selectedIngrs.forEach((ingr) => {
-      if (ingr.id < 0) newIngrs.push(ingr);
+      if (ingr.ingredient_id < 0) newIngrs.push(ingr);
       else existingIngrs.push(ingr);
     });
 
@@ -130,7 +145,50 @@ export default function MyMenuDialog({ open, onClose, onAddMenuItem }) {
     console.log(price); // price
     console.log("Type", type); // string: 'appetizer' / 'entree' / 'dessert'
 
-    onAddMenuItem(name, selectedIngrs, price, type);
+    // Add new ingredients to inventory
+    let options = {
+      method: "GET",
+      url: `${url}/addInventory`,
+      params: { name: "", quantity: 0 }
+    };
+
+    let countIngredAdded = 0;
+    // let IDs = [...newIngredients]
+    
+    selectedIngrs.forEach((ingr, index) => {
+      // Needs to be added to inventory database
+      if (ingr.id < 0) {  
+        options.params.name = ingr.name;
+        console.log("Adding new ingredient: ", ingr);
+
+        axios.request(options).then((res) => {
+          countIngredAdded++;
+
+          selectedIngrs[index].ingredient_id = getIdForIngredient(ingr.name);
+          console.log("Added ingred: ", ingr.name, " with ID: ", selectedIngrs[index].ingredient_id);
+        })
+      } else {
+        // IDs[index] = getIdForIngredient(ingr);
+      }
+    });
+
+    // Wait for all new ingredients to be added
+    while (countIngredAdded !== newIngrs.length) {}
+
+    let options2 = {
+      method: "GET",
+      url: `${url}/addMenuItem`,
+      params: { 
+        name: name,
+        category: type,
+        price: price,
+        ingredients: selectedIngrs
+      }
+    }
+
+    axios.request(options2).then((res) => {})
+
+    onAddMenuItem(name, selectedIngrs, newIngrs.length, price, type);
     handleClose();
   };
 
@@ -149,7 +207,7 @@ export default function MyMenuDialog({ open, onClose, onAddMenuItem }) {
     if (typeof newIngr === "string") {
       let newId = count - 1;
       setCount(count - 1);
-      newIngr = { name: newIngr, id: newId };
+      newIngr = { ingredient_id: newId, name: newIngr, quantity: 0 };
     }
 
     if (!selectedIngrs.includes(newIngr)) {
@@ -238,7 +296,7 @@ export default function MyMenuDialog({ open, onClose, onAddMenuItem }) {
                 isOptionEqualToValue={(option, value) =>
                   option.name === value.name
                 }
-                getOptionLabel={(option) => option.name}
+                getOptionLabel={(option) => option.name || ""}
                 options={ingredients}
                 loading={loading}
                 autoHighlight
