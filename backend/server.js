@@ -389,3 +389,31 @@ app.get("/items", (req, response) => {
     }
   );
 });
+
+app.get("/addMenuItem", (req, response) => {
+  let queryThing = `INSERT INTO ITEM(NAME, CATEGORY, EXTRA_PRICE) VALUES ('${req.query.name}', '${req.query.category}', ${req.query.price})`;
+
+  pool.query(queryThing, (err, res) => {
+    if (err) {
+      response.json({err: err});
+      return;
+    }
+    response.json({ res: res.rows });
+
+    let ingreds = res.query.ingredients;
+
+    ingreds.forEach((ingredient) => {
+      let ingredientMapping = `INSERT INTO ITEM_INGREDIENTS(ITEM_ID, INVENTORY_ID, AMOUNT) VALUES ((SELECT ID FROM ITEM WHERE NAME = '${req.query.name}'), ${ingredient.id}, ${ingredient.quantity})`
+
+      pool.query(ingredientMapping, (err2, res2) => {
+        if (err) {
+          response.json({err: err2});
+          return;
+        }
+        response.json({ res: res2.rows });
+      })
+    });
+  }
+  
+  )
+})

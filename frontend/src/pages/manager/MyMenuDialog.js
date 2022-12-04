@@ -21,6 +21,8 @@ import {
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { Stack } from "@mui/system";
+import axios from "axios";
+import { url } from "../../config/global.js";
 
 // FIXME: should be removed after async stuff gets done
 function sleep(delay = 0) {
@@ -50,21 +52,31 @@ export default function MyMenuDialog({ open, onClose, onAddMenuItem }) {
   const loading = openIngrList && ingredients.length === 0;
 
   useEffect(() => {
-    let active = true;
+    //let active = true;
 
     if (!loading) return undefined;
 
     (async () => {
-      await sleep(1e3); // should be replaced by actual async stuff
+      // await sleep(1e3); // should be replaced by actual async stuff
 
-      if (active) {
-        setIngredients([...dummyData]);
-      }
+      // if (active) {
+      //   setIngredients([...dummyData]);
+      // }
+
+      const options = {
+        method: "GET",
+        url: `${url}/inventory`,
+      };
+      axios.request(options).then((res) => {
+        console.log(res.data.rows);
+        let rows = res.data.rows;
+        setIngredients(rows);
+      });
     })();
 
-    return () => {
-      active = false;
-    };
+    // return () => {
+    //   active = false;
+    // };
   }, [loading]);
 
   const handleNameChange = (e) => {
