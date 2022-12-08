@@ -2,6 +2,12 @@ import { Card, Stack } from "@mui/material";
 import axios from "axios";
 import { url } from "../../config/global.js";
 
+/**
+ * Summary card of the items ordered by the user from a item
+ * @param {*} item 
+ * @returns Card component for the item ordered
+ */
+
 export default function SummaryCard({ item }) {
 
   const ingrStyle = {

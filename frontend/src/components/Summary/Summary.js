@@ -3,6 +3,11 @@ import SummaryCard from "./SummaryCard";
 import { useLang } from "../../contexts/LanguageContext";
 import { translateComponents } from "../../config/translate";
 
+/**
+ * Summary of the data given
+ * @param {*} data 
+ * @returns Summary card of the data
+ */
 export default function Summary({ data }) {
   const langInfo = useLang();
 

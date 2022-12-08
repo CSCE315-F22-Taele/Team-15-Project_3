@@ -12,6 +12,11 @@ import { translateComponents } from "../../config/translate";
 import axios from "axios";
 import { Box, Stack } from "@mui/material";
 
+
+/**
+ * Creates the initial landing page, setting up dependancies and api to user such as oauth, g-translate, ...
+ * @returns returns the landing page components
+ */
 export default function Landing() {
   const userInfo = useUserInfo(); // get user info from global state
   const [userStateInfo, setUserStateInfo] = useState(userInfo);
@@ -23,7 +28,9 @@ export default function Landing() {
   const [permission, setPermission] = useState(
     userInfo === null ? -1 : userInfo.permission
   );
-
+  /**
+   * gets the user identity from oauth
+   */
   useEffect(() => {
     let options = {
       method: "GET",
@@ -38,13 +45,19 @@ export default function Landing() {
     }
     // console.log("Language: ", langInfo);
   }, []);
-
+  /**
+   * displays userInfo and sets permission and state
+   */
   useEffect(() => {
     console.log("UPDATE", userInfo);
     setUserStateInfo(userInfo);
     setPermission(userInfo === null ? -1 : userInfo.permission);
   }, [updateUserInfo]);
 
+  /**
+   * takes in sign in responce for the google sign in
+   * @param {*} response 
+   */
   function googleSignIn(response) {
     console.log('signing in')
     let decoded = jwt_decode(response.credential);
@@ -67,17 +80,24 @@ export default function Landing() {
       // probably want to save permission somewhere and also probably want to move this stuff to its own page
     });
   }
-
+  /**
+   * content box
+   */
   const content = {
     display: "flex",
     justifyContent: "center",
     marginBottom: "15px",
   };
-
+  /**
+   * google style box
+   */
   const googleStyle = {
     marginBottom: "30px",
   };
 
+  /**
+   * returns the style and set of the landing page depending on the user.
+   */
   return (
     <Box sx={{ height: "100vh" }}>
       <Header name={"Landing"} />

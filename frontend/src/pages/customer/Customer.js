@@ -6,6 +6,10 @@ import OrderView from "../view/OrderView";
 import Mapper from "../../components/Map/MapComponent";
 import "../../styles/master.scss";
 
+/**
+ * Component for loading a customer page
+ * @returns HTML elements for customer page consisting of an OrderView
+ */
 export default function Customer() {
   return (
     <div>

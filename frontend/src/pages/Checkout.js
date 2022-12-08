@@ -7,7 +7,11 @@ import axios from "axios";
 import { url } from "../config/global";
 import { translateComponents } from "../config/translate";
 import { CenterWrapper } from "../styles/CenterWrapper";
-
+/**
+ * Exports the checkout functionality page depending on the user
+ * @param {*} user 
+ * @returns a page containing the relevant checkout information to the user
+ */
 export default function Checkout({ user }) {
   const location = useLocation();
   const [summaryData, setSummaryData] = useState([
@@ -22,6 +26,9 @@ export default function Checkout({ user }) {
   //      {string name, bool selected, int id},
   //    ],
   //]
+  /**
+   * handles the order to the user and updates the database as such
+   */
   const handleOrder = () => {
     let options = {
       method: "GET",
@@ -38,7 +45,7 @@ export default function Checkout({ user }) {
         console.log(err);
       });
   };
-
+  //returns the header and wrapper for the page checkout depending on user
   return (
     <div>
       <Header name={`${user} Checkout`} />

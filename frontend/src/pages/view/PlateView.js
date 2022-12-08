@@ -9,6 +9,13 @@ import { useLang } from "../../contexts/LanguageContext";
 import { translateComponents } from "../../config/translate";
 import { CenterWrapper } from "../../styles/CenterWrapper";
 
+/**
+ * handles the entree type selected from the given inputs
+ * @param {*} entreeData
+ * @param {*} handleEntreeSelect  
+ * @returns sets the button to the selected item, adjusting to it accordingly
+ */
+
 function EntreeSelection({ entreeData, handleEntreeSelect }) {
   const secStyle = {
     margin: "40px 0",
@@ -24,6 +31,13 @@ function EntreeSelection({ entreeData, handleEntreeSelect }) {
 }
 
 // user will either be "cashier" or "client"
+/**
+ * Defines the plate view of the user, that deals witht the view of the plate page
+ * @param {*} handleView
+ * @param {*} view
+ * @param {*} addItem
+ * @returns returns the plate view from the view types inputs given.
+ */
 export default function PlateView({ handleView, view, addItem }) {
   // NOTE: Data MUST have keys: id : int, selected : bool, and name : string
   const [sideData, setSideData] = useState([]);
@@ -35,6 +49,10 @@ export default function PlateView({ handleView, view, addItem }) {
   const langInfo = useLang();
   let translated = false;
 
+  /**
+   * Gets the title depending on the view var
+   * @returns returns the view type of the plate menu
+   */
   const getTitle = () => {
     if (view === 1) return "Bowl";
     else if (view === 2) return "Plate";
@@ -42,7 +60,12 @@ export default function PlateView({ handleView, view, addItem }) {
     else if (view === -1) return "Appetizer";
     else return "Error";
   };
-
+  /**
+   * returns extracted group depending on the rows and num given
+   * @param {*} rows 
+   * @param {*} num 
+   * @returns a list of groups
+   */
   function extractGroups(rows, num) {
     let groups = { Entree: [], Side: [], Appetizer: [] };
     rows.forEach((el) => {
@@ -72,12 +95,20 @@ export default function PlateView({ handleView, view, addItem }) {
     // [ {string name, int id,}]
   }, []);
 
+  /**
+   * handles the side selection depending on the id number
+   * @param {*} id 
+   * @returns none, but sets the side data
+   */
+
+
   useEffect(() => {
     if (!translated && langInfo !== "en" && langInfo !== null) {
       translateComponents(langInfo);
       translated = true;
     }
   }, [entreeData3]);
+
 
   const handleSideSelect = (id) => {
     const updatedData = sideData.map((item) => {
@@ -87,6 +118,12 @@ export default function PlateView({ handleView, view, addItem }) {
     setSideData(updatedData);
   };
 
+  /**
+   * handles the entree selection depending on id
+   * @param {*} id 
+   * @return none, but updates the data
+   */
+
   const handleAppetizerSelect = (id) => {
     const updatedData = appetizerData.map((item) => {
       item.selected = item.key === id;
@@ -95,6 +132,7 @@ export default function PlateView({ handleView, view, addItem }) {
     setAppetizerData(updatedData);
   };
 
+
   const handleEntreeSelect = (id) => {
     const updatedData = entreeData.map((item) => {
       item.selected = item.key === id;
@@ -102,6 +140,11 @@ export default function PlateView({ handleView, view, addItem }) {
     });
     setEntreeData(updatedData);
   };
+  /**
+   * handles the entree second selection
+   * @param {*} id 
+   * @returns none, but handles the entrees second data
+   */
   const handleEntreeSelect2 = (id) => {
     const updatedData = entreeData2.map((item) => {
       item.selected = item.key === id;
@@ -109,7 +152,11 @@ export default function PlateView({ handleView, view, addItem }) {
     });
     setEntreeData2(updatedData);
   };
-
+  /**
+   * handles the third entree selection
+   * @param {*} id 
+   * @returns none, but handles the entree selection 3
+   */
   const handleEntreeSelect3 = (id) => {
     const updatedData = entreeData3.map((item) => {
       item.selected = item.key === id;

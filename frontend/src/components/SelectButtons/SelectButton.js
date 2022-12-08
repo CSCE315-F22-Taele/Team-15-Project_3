@@ -1,5 +1,11 @@
 import Button from "@mui/material/Button";
 import { StyledSelectedButton } from "../../styles/StyledButtons";
+
+/**
+ * Component for a select button
+ * @param {*} param0 
+ * @returns 
+ */
 export default function SelectButton({ item, handleSelect }) {
   const btnVariant = item.selected ? "contained" : "outlined";
 

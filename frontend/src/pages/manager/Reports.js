@@ -26,7 +26,13 @@ import { Stack, Box } from "@mui/material";
 import { Link } from "react-router-dom";
 import Button from "@mui/material/Button";
 
-// Creates a date and time selector
+/**
+ * Renders a date-time selector
+ * @param {Dayjs} value Date-Time object
+ * @param {Function} handleChange Handler for input change
+ * @param {String} labelName Label identifying specific time selector
+ * @returns HTML for date-time selector
+ */
 function MaterialUIDateTimeSelect({ value, handleChange, labelName }) {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -40,6 +46,10 @@ function MaterialUIDateTimeSelect({ value, handleChange, labelName }) {
   );
 }
 
+/**
+ * Renders the reports tab
+ * @returns HTML for rendering the reports tab
+ */
 export default function Reports() {
   // Variables for timestamps
   const [salesStartTime, setSalesStartTime] = useState(
@@ -85,12 +95,21 @@ export default function Reports() {
     }
   }, [salesData, excessData, restockData, sellsTogetherData]);
 
-  // Convert Javascript timestamp to PostgreSQL timestamp
+  /**
+   * Converts javascript timestamp to Postgresql timestamp
+   * @param {Dayjs} time Javascript input from date-time picker
+   * @returns 
+   */
   function formatTimestamp(time) {
     let output = time.toISOString().replace("T", " ").slice(0, -5);
     return output;
   }
 
+  /**
+   * Formats decimals for report view
+   * @param {Number} decimal Decimal representing a percent
+   * @returns A formatted percentage
+   */
   function formatPercent(decimal) {
     return Number(decimal).toLocaleString(undefined, {
       style: "percent",
@@ -98,7 +117,11 @@ export default function Reports() {
     });
   }
 
-  // Query for sales information in a selected time period
+  /**
+   * Gets sales data between 2 time stamps
+   * @param {Dayjs} startTime Javascript timestamp to start at
+   * @param {Dayjs} endTime Javascript timestamp to end at
+   */
   function getSalesQuery(startTime, endTime) {
     const options = {
       method: "GET",
@@ -115,7 +138,10 @@ export default function Reports() {
     });
   }
 
-  // Query for items that sold less than 10% of their inventory after a selected time
+  /**
+   * Gets excess data from a starting time
+   * @param {Dayjs} startTime Starting timestamp
+   */
   function getExcessQuery(startTime) {
     const options = {
       method: "GET",
@@ -131,7 +157,11 @@ export default function Reports() {
     });
   }
 
-  // Query for what sells together in a selected time period
+  /**
+   * Gets sells together data between 2 timestamps
+   * @param {Dayjs} startTime Timestamp to start at
+   * @param {Dayjs} endTime Timestamp to end at
+   */
   function getSellsTogetherQuery(startTime, endTime) {
     const options = {
       method: "GET",
@@ -148,31 +178,46 @@ export default function Reports() {
     });
   }
 
-  // Handle changes to sales report start time
+  /**
+   * Handler for changing sales report start time
+   * @param {Dayjs} newValue Timestamp to change to
+   */
   const handleSalesStartChange = (newValue) => {
     setSalesStartTime(newValue);
     getSalesQuery(newValue, salesEndTime);
   };
 
-  // Handle changes to sales report end time
+  /**
+   * Handler for changing sales report end time
+   * @param {Dayjs} newValue Timestamp to change to
+   */
   const handleSalesEndChange = (newValue) => {
     setSalesEndTime(newValue);
     getSalesQuery(salesStartTime, newValue);
   };
 
-  // Handle changes to excess report time
+  /**
+   * Handler for changing excess report start time
+   * @param {Dayjs} newValue Timestamp to change to
+   */
   const handleExcessChange = (newValue) => {
     setExcessTime(newValue);
     getExcessQuery(newValue);
   };
 
-  // Handle changes to sells together report start time
+  /**
+   * Handler for changing sales together report start time
+   * @param {Dayjs} newValue Timestamp to change to
+   */
   const handleTogetherStartChange = (newValue) => {
     setSellsTogetherStartTime(newValue);
     getSellsTogetherQuery(newValue, sellsTogetherEndTime);
   };
 
-  // Handle changes to sells together report end time
+  /**
+   * Handler for changing sales together report end time
+   * @param {Dayjs} newValue Timestamp to change to
+   */
   const handleTogetherEndChange = (newValue) => {
     setSellsTogetherEndTime(newValue);
     getSellsTogetherQuery(sellsTogetherStartTime, newValue);

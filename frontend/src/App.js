@@ -14,6 +14,9 @@ import { UserInfoProvider } from "./contexts/UserContext";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { LangProvider } from "./contexts/LanguageContext";
 
+/**
+ * Runs the web application, connecting all of the pages
+ */
 function App() {
   const theme = createTheme({
     palette: {

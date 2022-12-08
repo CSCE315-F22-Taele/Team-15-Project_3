@@ -21,14 +21,36 @@ import { useLang } from "../../contexts/LanguageContext";
 import { translateComponents } from "../../config/translate";
 import { Link } from "react-router-dom";
 
+/**
+ * Creates menu item object
+ * @param {String} name Name of menu item
+ * @param {Number} id Identifier for menu item
+ * @param {Number} price Price of menu item
+ * @param {String} type Type of menu item (Entree, Side, Appetizer, Dessert)
+ * @param {Array} ingredients List of ingredients for the menu item 
+ * @returns Menu item object holding the passed data
+ */
 function createData(name, id, price, type, ingredients) {
   return { name, id, price, type, ingredients: [...ingredients] };
 }
 
+/**
+ * Creates ingredient object
+ * @param {String} name Name of ingredient
+ * @param {Number} id Identifier for ingredient
+ * @param {Number} amount Amount of ingredient used in menu item
+ * @returns Ingredient object holding the passed data
+ */
 function createIngrData(name, id, amount) {
   return { name, id, amount };
 }
 
+/**
+ * Component for row in the menu table
+ * @param {*} row Row to render
+ * @param {Function} Handler for deleting row 
+ * @returns HTML for rendering menu row
+ */
 function Row({ row, handleDelete }) {
   const [open, setOpen] = useState(false);
 
@@ -88,23 +110,39 @@ function Row({ row, handleDelete }) {
   );
 }
 
+/**
+ * Component for rendering the menu view
+ * @returns HTML for menu view
+ */
 export default function MyMenu() {
   const [data, setData] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
+
+
+  /**
+   * Handler for opening dialog box
+   */
 
   const langInfo = useLang();
 
   let translated = false;
 
+
   const handleOpen = () => {
     setOpenDialog(true);
   };
 
+  /**
+   * Handler for closing dialog box
+   */
   const handleClose = () => {
     setOpenDialog(false);
   };
 
-  // FIXME: delete int id from database
+  /**
+   * Handler for deleting from menu
+   * @param {Number} id ID for item to be deleted
+   */
   function handleDelete(id) {
     console.log(id);
     
@@ -123,6 +161,13 @@ export default function MyMenu() {
     //setData(data.filter((d) => d.id !== id));
   }
 
+  /**
+   * Handler for adding a new menu item
+   * @param {String} newName Name of new menu item
+   * @param {Array} newIngredients List of ingredients for menu item
+   * @param {Number} newPrice New price of menu item
+   * @param {String} newType Type for menu item
+   */
   const addMenuItem = (newName, newIngredients, newPrice, newType) => {
     console.log("ADDING...");
     console.log(newName);

@@ -11,12 +11,21 @@ import "../../styles/master.scss";
 import { OutlinedButton } from "../../styles/StyledButtons";
 import AppBar from "@mui/material/AppBar";
 
+/**
+ * Component for rendering the manager tab
+ * @returns HTML for manager tab
+ */
 export default function Driver() {
   const [tabValue, setTabValue] = useState(0);
   const handleTabChange = (e, newTabVal) => {
     setTabValue(newTabVal);
   };
 
+  /**
+   * Creates naviagation tab for manager views
+   * @param {*} props 
+   * @returns HTML for navigation tab
+   */
   function TabPanel(props) {
     const { children, value, index, ...other } = props;
 

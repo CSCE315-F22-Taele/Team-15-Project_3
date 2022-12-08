@@ -18,19 +18,11 @@ import { translateComponents } from "../../config/translate";
 import { url } from '../../config/global'
 import axios from 'axios'
 
-// function createData(name, email, id, permission) {
-//   return { name, email, id, permission };
-// }
-
-// // FIXME: DELETE ME
-// const dummyData = [
-//   createData("Frozen yoghurt", "a@gmail.com", 6.0, 1),
-//   createData("Ice cream sandwich", "cold@anatartica.com", 9.0, 1),
-//   createData("Eclair", "warm@tasty.com", 16.0, 1),
-//   createData("Cupcake", "delicious@bakery.com", 3.7, 1),
-//   createData("Gingerbread", "comeandgetme@fox.com", 16.0, 1),
-// ];
-
+/**
+ * Gets the permission label for a specified permission level
+ * @param {Number} permission Permission level
+ * @returns {String} Label for permission level
+ */
 function getPermissionName(permission) {
   switch (permission) {
     case 0:
@@ -44,6 +36,13 @@ function getPermissionName(permission) {
   }
 }
 
+/**
+ * A component that creates a dropdown menu for assigning user permissions
+ * @param {Number} permission The current permission level
+ * @param {Function} handleChangePerm Handler for permission changes
+ * @param {String} id Email for the user
+ * @returns HTML for a dropdown for selecting user permissions
+ */
 function SelectPermission({ permission, handleChangePerm, id }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [permName, setPermName] = useState(getPermissionName(permission));
@@ -107,15 +106,27 @@ function SelectPermission({ permission, handleChangePerm, id }) {
   );
 }
 
+/**
+ * Component for displaying user pemissions for the web application
+ * @returns HTML for member access tab
+ */
 export default function Access() {
   const theme = useTheme();
   const [rows, setRows] = useState([]);
+
+
+  /**
+   * Handler for changing permissions for a given user
+   * @param {Number} permission Permission level to give the user
+   * @param {String} id Email for the specified user
+   */
 
   const langInfo = useLang();
 
   let translated = false;
 
   // FIXME: update database to change permission
+
   const handleChangePerm = (permission, id) => {
     console.log(`update email: ${id} to permission ${permission}`);
     let options = {

@@ -13,6 +13,11 @@ import Panda from "../static/panda.png";
 import axios from "axios";
 
 
+/**
+ * Creates the header component for the user depending on the name
+ * @param {*} name 
+ * @returns A grid header to populate the header
+ */
 export default function Header({ name }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [profileAnchorEl, setProfileAnchorEl] = useState(null);
